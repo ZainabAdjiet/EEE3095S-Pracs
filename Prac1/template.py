@@ -15,7 +15,8 @@ import time
 import itertools as it
 
 LEDs = (17, 27, 22)
-btn = 18
+btn_up = 18
+btn_down = 23
 
 values = list(it.product(range(2), repeat=3))
 index = 0
@@ -30,6 +31,16 @@ def increment_count(channel):
     GPIO.output(on_LEDs, GPIO.HIGH)
     GPIO.output(off_LEDs, GPIO.LOW)
 
+# decrement count on button push and change LEDs
+def decrement_count(channel):
+    global index
+    index = len(values)-1 if index == 0 else index-1
+
+    on_LEDs = list(it.compress(LEDs, values[index]))
+    off_LEDs = [a for a in LEDs if a not in on_LEDs]
+    GPIO.output(on_LEDs, GPIO.HIGH)
+    GPIO.output(off_LEDs, GPIO.LOW)
+
 # set up pins
 def GPIO_setup():
     GPIO.setmode(GPIO.BCM)
@@ -38,9 +49,13 @@ def GPIO_setup():
     GPIO.setup(LEDs, GPIO.OUT)
     GPIO.output(LEDs, GPIO.LOW)
 
-    # setup button
-    GPIO.setup(btn, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-    GPIO.add_event_detect(btn, GPIO.FALLING, callback=increment_count, bouncetime=200)
+    # setup increment button
+    GPIO.setup(btn_up, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+    GPIO.add_event_detect(btn_up, GPIO.FALLING, callback=increment_count, bouncetime=200)
+
+    # setup decrement button
+    GPIO.setup(btn_down, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+    GPIO.add_event_detect(btn_down, GPIO.FALLING, callback=decrement_count, bouncetime=200)
 
 # Logic that you write
 def main():
