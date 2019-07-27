@@ -12,29 +12,40 @@ Date: 27/07/2019
 # import Relevant Librares
 import RPi.GPIO as GPIO
 import time
+import itertools as it
 
-LED = 17
+LEDs = (22,)
 btn = 18
 
-# toggle LED on button push
-def toggle_LED(channel):
-    GPIO.output(LED, not GPIO.input(LED))
+values = [(0,), (1,)]
+index = 0
+
+# increment count on button push and change LEDs
+def increment_count(channel):
+    global index
+    index = 0 if index == len(values)-1 else index+1
+
+    on_LEDs = list(it.compress(LEDs, values[index]))
+    off_LEDs = [a for a in LEDs if a not in on_LEDs]
+    GPIO.output(on_LEDs, GPIO.HIGH)
+    GPIO.output(off_LEDs, GPIO.LOW)
 
 # set up pins
 def GPIO_setup():
     GPIO.setmode(GPIO.BCM)
 
     # setup LEDs
-    GPIO.setup(LED, GPIO.OUT)
+    GPIO.setup(LEDs, GPIO.OUT)
+    GPIO.output(LEDs, GPIO.LOW)
 
     # setup button
     GPIO.setup(btn, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-    GPIO.add_event_detect(btn, GPIO.FALLING, callback=toggle_LED, bouncetime=200)
+    GPIO.add_event_detect(btn, GPIO.FALLING, callback=increment_count, bouncetime=200)
 
 # Logic that you write
 def main():
     time.sleep(1)
-    
+
 # Only run the functions if 
 if __name__ == "__main__":
     # Make sure the GPIO is stopped correctly
