@@ -14,10 +14,10 @@ import RPi.GPIO as GPIO
 import time
 import itertools as it
 
-LEDs = (22,)
+LEDs = (17, 27, 22)
 btn = 18
 
-values = [(0,), (1,)]
+values = list(it.product(range(2), repeat=3))
 index = 0
 
 # increment count on button push and change LEDs
