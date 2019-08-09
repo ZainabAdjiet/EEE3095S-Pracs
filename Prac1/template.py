@@ -14,30 +14,30 @@ import RPi.GPIO as GPIO
 import time
 import itertools as it
 
-LEDs = (17, 27, 22)
-btn_up = 18
-btn_down = 23
+LEDs = (17, 27, 22)     # LED pins
+btn_up = 18             # increment count button
+btn_down = 23           # decrement count button
 
-values = list(it.product(range(2), repeat=3))
-index = 0
+values = list(it.product(range(2), repeat=3))   # list of 3 bit binary values in order
+index = 0   # iterator index for 'values' array
 
 # increment count on button push and change LEDs
 def increment_count(channel):
     global index
-    index = 0 if index == len(values)-1 else index+1
+    index = 0 if index == len(values)-1 else index+1    # shift up position in 'values'
 
-    on_LEDs = list(it.compress(LEDs, values[index]))
-    off_LEDs = [a for a in LEDs if a not in on_LEDs]
+    on_LEDs = list(it.compress(LEDs, values[index]))    # select LEDs to turn on for current binary count
+    off_LEDs = [a for a in LEDs if a not in on_LEDs]    # get LEDs to switch off
     GPIO.output(on_LEDs, GPIO.HIGH)
     GPIO.output(off_LEDs, GPIO.LOW)
 
 # decrement count on button push and change LEDs
 def decrement_count(channel):
     global index
-    index = len(values)-1 if index == 0 else index-1
+    index = len(values)-1 if index == 0 else index-1    # shift down position in 'values'
 
-    on_LEDs = list(it.compress(LEDs, values[index]))
-    off_LEDs = [a for a in LEDs if a not in on_LEDs]
+    on_LEDs = list(it.compress(LEDs, values[index]))    # select LEDs to turn on for current binary count
+    off_LEDs = [a for a in LEDs if a not in on_LEDs]    # get LEDs to switch off
     GPIO.output(on_LEDs, GPIO.HIGH)
     GPIO.output(off_LEDs, GPIO.LOW)
 
