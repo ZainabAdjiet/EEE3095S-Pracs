@@ -1,6 +1,6 @@
 .RECIPEPREFIX +=
 CC = arm-linux-gnueabihf-g++
-CFLAGS = -lm -lrt
+CFLAGS = -lm -lrt -Ofast -mfpu=vfpv3xd-fp16
 INCLUDE = -ITools
 
 PROG = bin/*
